@@ -1,11 +1,14 @@
-import express from 'express'
+import express from 'express';
+import { errorMiddleware } from './lib/error';
 
-import routes from './routes'
+import routes from './routes';
 
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(routes)
+app.use(routes);
 
-export default app
+app.use(errorMiddleware);
+
+export default app;
