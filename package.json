@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npm run build",
     "format": "pretty-quick --staged",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "start": "npm run build && npm run build:start",
+    "start": "node build/index.js",
     "dev": "dotenv -e .env npm run build:live",
     "build": "tsc -p .",
-    "build:start": "node build/index.js",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts"
   },
   "keywords": [],
