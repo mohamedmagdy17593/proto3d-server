@@ -4,6 +4,13 @@ import { requestUploadModel } from './utils/model';
 
 const router = express.Router();
 
+router.get(
+  '/',
+  asyncHandler((req, res) => {
+    res.send({ hello: 'World' });
+  }),
+);
+
 router.post(
   '/api/upload-model',
   asyncHandler((req, res) => {

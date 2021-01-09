@@ -7,8 +7,10 @@
     "format": "pretty-quick --staged",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "start": "dotenv -e .env npm run build:live",
+    "start": "npm run build && npm run build:start",
+    "dev": "dotenv -e .env npm run build:live",
     "build": "tsc -p .",
+    "build:start": "node build/index.js",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts"
   },
   "keywords": [],
@@ -41,5 +43,8 @@
     "hooks": {
       "pre-commit": "npm run lint:fix && npm run format"
     }
+  },
+  "engines": {
+    "node": "14.x"
   }
 }
