@@ -18,7 +18,7 @@ const LOGIN_USER = {
 async function downloadModel(url: string) {
   return new Promise<{ buffer: any }>(async resolve => {
     console.log('Start browser');
-    let browser = await puppeteer.launch();
+    let browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     let page = await browser.newPage();
     await page.setDefaultNavigationTimeout(0);
 
