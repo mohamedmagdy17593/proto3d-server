@@ -164,7 +164,11 @@ async function uploadModelToCloudinary(buffer: any) {
 const SEARCH_API = 'https://api.sketchfab.com/v3/search';
 const MAX_FILE_SIZE = 10485760;
 
-export async function searchModels(searchQuery: string) {
+interface SearchModelsArg {
+  searchQuery: string;
+  cursor: number;
+}
+export async function searchModels({ searchQuery, cursor }: SearchModelsArg) {
   let { data: data1 } = await axios.get(SEARCH_API, {
     params: {
       type: 'models',
@@ -172,6 +176,7 @@ export async function searchModels(searchQuery: string) {
       animated: false,
       sound: false,
       max_filesizes: `gltf:${MAX_FILE_SIZE}`,
+      cursor,
       q: searchQuery,
     },
   });
@@ -182,7 +187,7 @@ export async function searchModels(searchQuery: string) {
       animated: false,
       sound: false,
       max_filesizes: `gltf:${MAX_FILE_SIZE}`,
-      cursor: 24,
+      cursor: cursor + 24,
       q: searchQuery,
     },
   });

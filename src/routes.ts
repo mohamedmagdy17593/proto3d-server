@@ -17,9 +17,12 @@ router.get(
 router.get(
   '/api/models',
   asyncHandler(async (req, res) => {
-    let { search } = req.query;
+    let { search, cursor = 0 } = req.query;
 
-    let result = await searchModels(search as string);
+    let result = await searchModels({
+      searchQuery: search as string,
+      cursor: +cursor,
+    });
 
     res.send({ result });
   }),
