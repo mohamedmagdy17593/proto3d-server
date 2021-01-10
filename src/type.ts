@@ -2,7 +2,8 @@ export interface SketchfabModel {
   id: string;
   name: string;
   sketchfabUrl: string;
-  img: string;
+  imgSmall: string;
+  imgLarge: string;
 }
 
 export type ModelStatus =

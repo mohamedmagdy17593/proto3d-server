@@ -14,7 +14,8 @@ model Model {
   id            String   @id
   name          String
   sketchfabUrl  String
-  img           String
+  imgSmall      String
+  imgLarge      String
   gltfUrl       String?
   status        String   @default("not-uploaded")
   statusMessage String   @default("Not uploaded to our server")

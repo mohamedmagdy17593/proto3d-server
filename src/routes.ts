@@ -28,7 +28,13 @@ router.get(
 router.post(
   '/api/upload-model',
   asyncHandler(async (req, res) => {
-    let { id, name, sketchfabUrl, img }: SketchfabModel = req.body;
+    let {
+      id,
+      name,
+      sketchfabUrl,
+      imgSmall,
+      imgLarge,
+    }: SketchfabModel = req.body;
 
     // create model record in our database
     let model = await prisma.model.findFirst({ where: { id } });
@@ -40,19 +46,25 @@ router.post(
       }
     } else {
       await prisma.model.create({
-        data: {
-          id,
-          img,
-          name,
-          sketchfabUrl,
-        },
+        data: { id, name, sketchfabUrl, imgSmall, imgLarge },
       });
     }
 
     // start uploading job
-    requestUploadModel({ id, name, sketchfabUrl, img });
+    requestUploadModel({ id, name, sketchfabUrl, imgSmall, imgLarge });
 
     res.send({ done: true });
+  }),
+);
+
+router.get(
+  '/api/model/:id',
+  asyncHandler(async (req, res) => {
+    let { id } = req.params;
+
+    let model = await prisma.model.findFirst({ where: { id } });
+
+    res.send({ model });
   }),
 );
 

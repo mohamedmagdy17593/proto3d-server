@@ -162,29 +162,47 @@ async function uploadModelToCloudinary(buffer: any) {
 
 // https://docs.sketchfab.com/data-api/v3/index.html#!/search/get_v3_search_type_models
 const SEARCH_API = 'https://api.sketchfab.com/v3/search';
+const MAX_FILE_SIZE = 10485760;
 
 export async function searchModels(searchQuery: string) {
-  let { data } = await axios.get(SEARCH_API, {
+  let { data: data1 } = await axios.get(SEARCH_API, {
     params: {
       type: 'models',
       downloadable: true,
       animated: false,
       sound: false,
-      max_filesizes: 'gltf:10485760',
+      max_filesizes: `gltf:${MAX_FILE_SIZE}`,
+      q: searchQuery,
+    },
+  });
+  let { data: data2 } = await axios.get(SEARCH_API, {
+    params: {
+      type: 'models',
+      downloadable: true,
+      animated: false,
+      sound: false,
+      max_filesizes: `gltf:${MAX_FILE_SIZE}`,
+      cursor: 24,
       q: searchQuery,
     },
   });
 
+  let dataResults = [...data1.results, ...data2.results];
+
   // reformating
-  let sketchfabModels: SketchfabModel[] = data.results.map((result: any) => {
-    return {
-      id: result.uid as string,
-      name: result.name as string,
-      sketchfabUrl: result.viewerUrl as string,
-      img: result.thumbnails?.images?.[result.thumbnails?.images?.length - 2]
-        ?.url as string,
-    };
-  });
+  let sketchfabModels: SketchfabModel[] = dataResults
+    .filter((result: any) => result.archives.gltf.size < MAX_FILE_SIZE)
+    .map((result: any) => {
+      let images = result.thumbnails?.images;
+      let [, imgSmall, imgLarge] = images.reverse();
+      return {
+        id: result.uid as string,
+        name: result.name as string,
+        sketchfabUrl: result.viewerUrl as string,
+        imgSmall: imgSmall?.url as string,
+        imgLarge: imgLarge?.url as string,
+      };
+    });
 
   let resultIds = sketchfabModels.map(model => model.id);
   let ourModels = await prisma.model.findMany({
@@ -196,7 +214,7 @@ export async function searchModels(searchQuery: string) {
   let results = sketchfabModels.map(model => {
     let ourModel = ourModels.find(ourModel => ourModel.id === model.id);
     if (ourModel) {
-      return ourModel;
+      return { ...ourModel, ...model };
     }
     return {
       ...model,
